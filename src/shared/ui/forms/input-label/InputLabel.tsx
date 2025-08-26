@@ -1,4 +1,5 @@
 import { Label } from "flowbite-react";
+
 import type { InputLabelProps } from "./types";
 
 export const InputLabel: React.FC<InputLabelProps> = ({
@@ -10,4 +11,4 @@ export const InputLabel: React.FC<InputLabelProps> = ({
     <Label htmlFor={htmlFor}>{title}</Label>
     {required && <Label color="failure">*</Label>}
   </div>;
-}
+};

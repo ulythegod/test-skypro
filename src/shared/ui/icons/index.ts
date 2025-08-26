@@ -1,1 +1,1 @@
-export * from "./common-icon/ui"
+export * from "./common-icon/ui";

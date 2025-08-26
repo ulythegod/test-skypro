@@ -1,13 +1,13 @@
-import { BrowserRouter } from "react-router";
-import './index.css';
-import { AuthorizationPage } from "../pages/authorization-page";
+import { createBrowserRouter, RouterProvider } from "react-router";
+
+import "./index.css";
+
+import { routes } from "./routes";
 
 function App() {
-  return (
-    <BrowserRouter>
-      <AuthorizationPage />
-    </BrowserRouter>
-  )
+  const router = createBrowserRouter(routes);
+
+  return <RouterProvider router={router} />;
 };
 
 export default App;

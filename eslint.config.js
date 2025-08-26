@@ -4,6 +4,8 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 import { globalIgnores } from 'eslint/config'
+import simpleImportSort from "eslint-plugin-simple-import-sort";
+import stylistic from '@stylistic/eslint-plugin';
 
 export default tseslint.config([
   globalIgnores(['dist']),
@@ -18,6 +20,28 @@ export default tseslint.config([
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
+      parserOptions: {
+        tsconfigRootDir: "/",
+      },
     },
+    rules: {
+			semi: ["warn", "always"],
+      "react/prop-types": "off",
+      "simple-import-sort/imports": [
+        "warn",
+        {
+          groups: [["^react", "^@?\\w"], ["^@src(/.*|$)", "^@?\\w"], ["^[^.]"]],
+        },
+      ],
+      '@stylistic/array-bracket-spacing': ["error", "never"],
+      '@stylistic/arrow-spacing': "error",
+      "comma-dangle": ["error", "never"],
+      '@stylistic/computed-property-spacing': ["error", "never"],
+      "@stylistic/indent": ["error", 2],
+      '@stylistic/jsx-indent': ["error", 2],
+      '@stylistic/max-len': ["error", { "code": 120 }],
+      '@stylistic/quotes': ["error", "double"],
+		},
+    plugins: { "simple-import-sort": simpleImportSort, '@stylistic': stylistic },
   },
 ])
