@@ -1,25 +1,29 @@
 import * as yup from "yup";
 
-import { EMAIL_REGEX, PASSWORD_REGEX } from "../../shared/consts";
+import {
+  EMAIL_ERROR_MESSAGE,
+  EMAIL_REGEX,
+  PASSWORD_ERROR_MESSAGE,
+  PASSWORD_REGEX,
+  REPEATED_PASSWORD_ERROR_MESSAGE,
+  REPEATED_PASSWORD_REQUIRED_ERROR_MESSAGE
+} from "../../shared/consts";
 
 export const registrationDataValidationScheme = yup.object({
-  email: yup.string().matches(EMAIL_REGEX, "Email введен не верно"),
+  email: yup.string().matches(EMAIL_REGEX, EMAIL_ERROR_MESSAGE),
   password: yup
     .string()
     .matches(
       PASSWORD_REGEX,
-      `Пароль не верный: 
-      Пароль должен содержать минимум 8 символов, 
-      включая заглавные и строчные буквы, цифру и 
-      один из специальных символов: !@#$%^&*`
+      PASSWORD_ERROR_MESSAGE
     ),
   repeatedPassword: yup.string()
-    .required("Повторите пароль")
+    .required(REPEATED_PASSWORD_REQUIRED_ERROR_MESSAGE)
     .when("password", (password, schema) => {
       return schema.test({
         test: (repeatedPassword) => 
           password && repeatedPassword === password?.[0],
-        message: "Пароли не совпадают"
+        message: REPEATED_PASSWORD_ERROR_MESSAGE
       });
     })
 });

@@ -39,7 +39,7 @@ export const FormTextInput: React.FC<FormTextInputProps> = ({
       required={required}
       value={value}
       onChange={handleInputChange}
-      className="pr-12"
+      className={type === "password" ? "pr-12" : ""}
     />
     {error && <Label color="failure">{error}</Label>}
     {
