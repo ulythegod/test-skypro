@@ -104,7 +104,7 @@ export const AuthorizationPage: React.FC = () => {
           to="/register"
           className="text-cyan-600 hover:underline dark:text-cyan-500"
         >
-          Зарегестрироваться
+          {" Зарегистрироваться"}
         </Link>
       </span>
     </form>

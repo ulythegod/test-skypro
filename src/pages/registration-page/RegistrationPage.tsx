@@ -99,15 +99,15 @@ export const RegistrationPage: React.FC = () => {
         type="button"
         onClick={handleRegisterButtonClicked}
       >
-        Зарегестрироваться
+        Зарегистрироваться
       </Button>
       <span>
-        Есть аккаунт? 
+        Есть аккаунт?
         <Link
           to="/"
           className="text-cyan-600 hover:underline dark:text-cyan-500"
         >
-          Авторизоваться
+          {" Авторизоваться"}
         </Link>
       </span>
     </form>
