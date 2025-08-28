@@ -1,42 +1,48 @@
 import type React from "react";
-import { Button, Checkbox, Label } from "flowbite-react";
+import { useCallback, useState } from "react";
 import { Link } from "react-router";
-import { CommonIcon } from "../../shared/ui/icons";
+import { Button, Checkbox, Label } from "flowbite-react";
+import * as yup from "yup";
+
 import { FormTextInput } from "../../shared/ui/forms";
-import { useCallback, useState, } from "react";
+import { FormWrapper } from "../../shared/ui/forms/form-wrapper";
+import { CommonIcon } from "../../shared/ui/icons";
+import { authorizationDataValidationScheme } from "./scheme";
 import type { AuthorizationData, AuthorizationDataError } from "./types";
-import { authorizationDataValidationScheme } from "./schemes";
-import * as yup from 'yup';
 
 export const AuthorizationPage: React.FC = () => {
-  const [authorizationData, setAuthorizationData] = useState<AuthorizationData>({
+  const [authorizationData,
+    setAuthorizationData] = useState<AuthorizationData>({
     email: "",
-    password: "",
+    password: ""
   });
-  const [validationErrors, setValidationErrors] = useState<AuthorizationDataError>({
+  const [validationErrors,
+    setValidationErrors] = useState<AuthorizationDataError>({
     email: "",
-    password: "",
+    password: ""
   });
-  const [isRememberMe, setIsRememberMe] = useState<boolean>(false);
+  const [isRememberMe,
+    setIsRememberMe] = useState<boolean>(false);
 
   const handleInputChange = useCallback((value: string, fieldCode: string) => {
     setAuthorizationData((prevData: AuthorizationData) => {
       return {
         ...prevData,
-        [fieldCode]: value,
-      }
+        [fieldCode]: value
+      };
     });
   }, []);
 
   const handleEnterButtonClicked = useCallback(() => {
     try {
       authorizationDataValidationScheme.validateSync(authorizationData, {
-        abortEarly: false,
+        abortEarly: false
       });
       setValidationErrors({
         email: "",
-        password: "",
+        password: ""
       });
+      //TODO: Когда появится бэк доделать авторизацию
     } catch (error) {
       const validationError = error as yup.ValidationError;
       const emailError = validationError.inner.find((errorItem) => {
@@ -48,51 +54,59 @@ export const AuthorizationPage: React.FC = () => {
 
       setValidationErrors({
         email: emailError,
-        password: passwordError,
+        password: passwordError
       });
     };    
   }, [authorizationData]);
 
   const handleRememberMeCheckbox = useCallback(() => {
-    setIsRememberMe((prevIsRememberMe) => !prevIsRememberMe)
+    setIsRememberMe((prevIsRememberMe) => !prevIsRememberMe);
   }, []);
 
-  return <div className="min-h-screen flex flex-col justify-center items-center p-4">
-    <div className="w-full max-w-md space-y-8">
-      <form className="flex max-w-md flex-col gap-4">
-        <CommonIcon src="/icon.png" alt="Логотип" />
-        <FormTextInput
-          id="email"
-          title="Email"
-          type="text"
-          placeholder="Введите email"
-          required={true}
-          value={authorizationData.email}
-          onChange={handleInputChange}
-          error={validationErrors.email ?? ""}
+  return <FormWrapper>
+    <form className="flex max-w-md flex-col gap-4">
+      <CommonIcon src="/icon.png" alt="Логотип" />
+      <FormTextInput
+        id="email"
+        title="Email"
+        type="text"
+        placeholder="Введите email"
+        required={true}
+        value={authorizationData.email}
+        onChange={handleInputChange}
+        error={validationErrors.email ?? ""}
+      />
+      <FormTextInput
+        id="password"
+        title="Пароль"
+        type="password"
+        placeholder="Введите пароль"
+        required={true}
+        value={authorizationData.password}
+        onChange={handleInputChange}
+        error={validationErrors.password ?? ""}
+      />
+      <Link to="#" className="text-cyan-600 hover:underline dark:text-cyan-500">
+        Забыли пароль?
+      </Link>
+      <div className="flex items-center gap-2">
+        <Checkbox
+          id="remember"
+          checked={isRememberMe}
+          onChange={handleRememberMeCheckbox}
         />
-        <FormTextInput
-          id="password"
-          title="Пароль"
-          type="password"
-          placeholder="Введите пароль"
-          required={true}
-          value={authorizationData.password}
-          onChange={handleInputChange}
-          error={validationErrors.password ?? ""}
-        />
-        <Link to="#" className="text-cyan-600 hover:underline dark:text-cyan-500">
-          Забыли пароль?
+        <Label htmlFor="remember">Запомнить меня</Label>
+      </div>
+      <Button type="button" onClick={handleEnterButtonClicked}>Войти</Button>
+      <span>
+        Нет аккаунта? 
+        <Link
+          to="/register"
+          className="text-cyan-600 hover:underline dark:text-cyan-500"
+        >
+          {" Зарегистрироваться"}
         </Link>
-        <div className="flex items-center gap-2">
-          <Checkbox id="remember" checked={isRememberMe} onChange={handleRememberMeCheckbox} />
-          <Label htmlFor="remember">Запомнить меня</Label>
-        </div>
-        <Button type="button" onClick={handleEnterButtonClicked}>Войти</Button>
-        <Link to="#" className="text-cyan-600 hover:underline dark:text-cyan-500">
-          Зарегестрироваться
-        </Link>
-      </form>
-    </div>
-  </div>;
-}
+      </span>
+    </form>
+  </FormWrapper>;
+};
