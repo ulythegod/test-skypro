@@ -49,7 +49,7 @@ export const FormTextInput: React.FC<FormTextInputProps> = ({
         className={
           `absolute 
           right-2
-          top-5
+          top-1/2
           h-8 w-8
           !p-1.5
           bg-transparent

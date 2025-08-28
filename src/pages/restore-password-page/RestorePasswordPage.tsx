@@ -6,25 +6,23 @@ import * as yup from "yup";
 import { FormTextInput } from "../../shared/ui/forms";
 import { FormWrapper } from "../../shared/ui/forms/form-wrapper";
 import { CommonIcon } from "../../shared/ui/icons";
-import { registrationDataValidationScheme } from "./scheme";
-import type { RegistrationData, RegistrationDataError } from "./types";
+import { restoreDataValidationScheme } from "./scheme";
+import type { RestorePasswordData, RestorePasswordDataError } from "./types";
 
-export const RegistrationPage: React.FC = () => {
-  const [registrationData,
-    setRegistrationData] = useState<RegistrationData>({
-    email: "",
+export const RestorePasswordPage: React.FC = () => {
+  const [restorePasswordData,
+    setRestorePasswordData] = useState<RestorePasswordData>({
     password: "",
     repeatedPassword: ""
   });
-  const [registrationDataError,
-    setRegistrationDataError] = useState<RegistrationDataError>({
-    email: "",
+  const [restorePasswordDataError,
+    setRestorePasswordDataError] = useState<RestorePasswordDataError>({
     password: "",
     repeatedPassword: ""
   });
 
   const handleInputChange = useCallback((value: string, fieldCode: string) => {
-    setRegistrationData((prevData: RegistrationData) => {
+    setRestorePasswordData((prevData: RestorePasswordData) => {
       return {
         ...prevData,
         [fieldCode]: value
@@ -34,57 +32,42 @@ export const RegistrationPage: React.FC = () => {
 
   const handleRegisterButtonClicked = useCallback(() => {
     try {
-      registrationDataValidationScheme.validateSync(registrationData, {
+      restoreDataValidationScheme.validateSync(restorePasswordData, {
         abortEarly: false
       });
-      setRegistrationDataError({
-        email: "",
+      setRestorePasswordDataError({
         password: "",
         repeatedPassword: ""
       });
       //TODO: Когда появится бэк доделать регистрацию
     } catch (error) {
       const validationError = error as yup.ValidationError;
-      const emailError = validationError.inner.find((errorItem) => {
-        return errorItem.path === "email";
-      })?.message ?? "";
       const passwordError = validationError.inner.find((errorItem) => {
         return errorItem.path === "password";
       })?.message ?? "";
       const repeatedPasswordError = validationError.inner.find((errorItem) => {
         return errorItem.path === "repeatedPassword";
       })?.message ?? "";
-  
-      setRegistrationDataError({
-        email: emailError,
+    
+      setRestorePasswordDataError({
         password: passwordError,
         repeatedPassword: repeatedPasswordError
       });
     };    
-  }, [registrationData]);
+  }, [restorePasswordData]);
 
   return <FormWrapper>
     <form className="flex max-w-md flex-col gap-4">
       <CommonIcon src="/icon.png" alt="Логотип" />
-      <FormTextInput
-        id="email"
-        title="Email"
-        type="text"
-        placeholder="Введите email"
-        required={true}
-        value={registrationData.email}
-        onChange={handleInputChange}
-        error={registrationDataError.email ?? ""}
-      />
       <FormTextInput
         id="password"
         title="Пароль"
         type="password"
         placeholder="Введите пароль"
         required={true}
-        value={registrationData.password}
+        value={restorePasswordData.password}
         onChange={handleInputChange}
-        error={registrationDataError.password ?? ""}
+        error={restorePasswordDataError.password ?? ""}
       />
       <FormTextInput
         id="repeatedPassword"
@@ -92,18 +75,18 @@ export const RegistrationPage: React.FC = () => {
         type="password"
         placeholder="Повторите пароль"
         required={true}
-        value={registrationData.repeatedPassword}
+        value={restorePasswordData.repeatedPassword}
         onChange={handleInputChange}
-        error={registrationDataError.repeatedPassword ?? ""}
+        error={restorePasswordDataError.repeatedPassword ?? ""}
       />
       <Button
         type="button"
         onClick={handleRegisterButtonClicked}
       >
-        Зарегистрироваться
+        Сохранить
       </Button>
       <span>
-        Есть аккаунт?
+        Вспомнили пароль?
         <Link
           to="/"
           className="text-cyan-600 hover:underline dark:text-cyan-500"
