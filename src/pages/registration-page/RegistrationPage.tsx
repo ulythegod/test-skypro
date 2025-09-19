@@ -1,8 +1,11 @@
 import { useCallback, useState } from "react";
 import { Link } from "react-router";
-import { Button } from "flowbite-react";
+import type { SerializedError } from "@reduxjs/toolkit";
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { Button, Label } from "flowbite-react";
 import * as yup from "yup";
 
+import { type CreateUserResult,useCreateUserMutation } from "../../shared/api/auth";
 import { FormTextInput } from "../../shared/ui/forms";
 import { FormWrapper } from "../../shared/ui/forms/form-wrapper";
 import { CommonIcon } from "../../shared/ui/icons";
@@ -22,6 +25,10 @@ export const RegistrationPage: React.FC = () => {
     password: "",
     repeatedPassword: ""
   });
+  const [registrationError, setRegistrationError] = useState<string>("");
+  const [registrationSuccessMessage, setRegistrationSuccessMessage] = useState<string>("");
+
+  const [createUser] = useCreateUserMutation();
 
   const handleInputChange = useCallback((value: string, fieldCode: string) => {
     setRegistrationData((prevData: RegistrationData) => {
@@ -42,7 +49,18 @@ export const RegistrationPage: React.FC = () => {
         password: "",
         repeatedPassword: ""
       });
-      //TODO: Когда появится бэк доделать регистрацию
+
+      createUser({
+        email: registrationData.email,
+        password: registrationData.password
+      }).then((result) => {
+        if ((result?.data as CreateUserResult)) {
+          setRegistrationSuccessMessage("Регистрация прошла успешно, проверьте свою почту.");
+          setRegistrationError("");
+        } else if ((result?.error as FetchBaseQueryError | SerializedError)) {
+          setRegistrationError("Возникла ошибка при регистрации. Повторите попытку позже.");
+        }
+      });
     } catch (error) {
       const validationError = error as yup.ValidationError;
       const emailError = validationError.inner.find((errorItem) => {
@@ -61,10 +79,10 @@ export const RegistrationPage: React.FC = () => {
         repeatedPassword: repeatedPasswordError
       });
     };    
-  }, [registrationData]);
+  }, [createUser, registrationData]);
 
   return <FormWrapper>
-    <form className="flex max-w-md flex-col gap-4">
+    {!registrationSuccessMessage && <form className="flex max-w-md flex-col gap-4">
       <CommonIcon src="/icon.png" alt="Логотип" />
       <FormTextInput
         id="email"
@@ -96,6 +114,7 @@ export const RegistrationPage: React.FC = () => {
         onChange={handleInputChange}
         error={registrationDataError.repeatedPassword ?? ""}
       />
+      {registrationError && <Label color="failure">{registrationError}</Label>}
       <Button
         type="button"
         onClick={handleRegisterButtonClicked}
@@ -111,6 +130,7 @@ export const RegistrationPage: React.FC = () => {
           {" Авторизоваться"}
         </Link>
       </span>
-    </form>
+    </form>}
+    {registrationSuccessMessage && <Label color="success">{registrationSuccessMessage}</Label>}
   </FormWrapper>;
 };
