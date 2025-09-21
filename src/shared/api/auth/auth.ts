@@ -11,7 +11,7 @@ import type {
   User
 } from "./types";
 
-const authBaseUrl = `${BASE_URl}auth`;
+const authBaseUrl = `${BASE_URl}/auth`;
 
 export const authApi = createApi({
   reducerPath: "authApi",
@@ -29,7 +29,7 @@ export const authApi = createApi({
     createUser: build.mutation<CreateUserResult, CreateUserParams>({
       query: (body) => {
         return {
-          url: `${authBaseUrl}/users`,
+          url: `${authBaseUrl}/users/`,
           method: "POST",
           body
         };
