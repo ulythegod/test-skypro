@@ -1,9 +1,12 @@
 import type React from "react";
 import { useCallback, useState } from "react";
 import { Link } from "react-router";
+import type { SerializedError } from "@reduxjs/toolkit";
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { Button, Checkbox, Label } from "flowbite-react";
 import * as yup from "yup";
 
+import { type CreateUserTokenResult,useCreateUserTokenMutation } from "../../shared/api/auth";
 import { FormTextInput } from "../../shared/ui/forms";
 import { FormWrapper } from "../../shared/ui/forms/form-wrapper";
 import { CommonIcon } from "../../shared/ui/icons";
@@ -23,6 +26,9 @@ export const AuthorizationPage: React.FC = () => {
   });
   const [isRememberMe,
     setIsRememberMe] = useState<boolean>(false);
+  const [authorizationError, setAuthorizationError] = useState<string>("");
+
+  const [authorizeUser] = useCreateUserTokenMutation();
 
   const handleInputChange = useCallback((value: string, fieldCode: string) => {
     setAuthorizationData((prevData: AuthorizationData) => {
@@ -42,7 +48,16 @@ export const AuthorizationPage: React.FC = () => {
         email: "",
         password: ""
       });
-      //TODO: Когда появится бэк доделать авторизацию
+      
+      authorizeUser(authorizationData).then((result) => {
+        if ((result?.data as CreateUserTokenResult)) { 
+          sessionStorage.setItem("access", result?.data?.access ?? "");         
+          sessionStorage.setItem("refresh", result?.data?.refresh ?? "");         
+          setAuthorizationError("");
+        } else if ((result?.error as FetchBaseQueryError | SerializedError)) {
+          setAuthorizationError("Возникла ошибка при авторизации. Повторите попытку позже.");
+        }
+      });
     } catch (error) {
       const validationError = error as yup.ValidationError;
       const emailError = validationError.inner.find((errorItem) => {
@@ -57,7 +72,7 @@ export const AuthorizationPage: React.FC = () => {
         password: passwordError
       });
     };    
-  }, [authorizationData]);
+  }, [authorizationData, authorizeUser]);
 
   const handleRememberMeCheckbox = useCallback(() => {
     setIsRememberMe((prevIsRememberMe) => !prevIsRememberMe);
@@ -97,6 +112,7 @@ export const AuthorizationPage: React.FC = () => {
         />
         <Label htmlFor="remember">Запомнить меня</Label>
       </div>
+      {authorizationError && <Label color="failure">{authorizationError}</Label>}
       <Button type="button" onClick={handleEnterButtonClicked}>Войти</Button>
       <span>
         Нет аккаунта? 
