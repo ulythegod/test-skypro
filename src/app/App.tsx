@@ -1,16 +1,15 @@
-import { Provider } from "react-redux";
-import { createBrowserRouter, RouterProvider } from "react-router";
-
-import "./index.css";
-
+import { MyExpenses } from "../pages/my-expenses";
+import { LayoutHeader } from "../shared/ui/header";
+import { StyledLayout } from "./styles";
 import { store } from "../shared/store";
-import { routes } from "./routes";
+import { Provider } from "react-redux";
 
 function App() {
-  const router = createBrowserRouter(routes);
-
   return <Provider store={store}>
-    <RouterProvider router={router} />
+    <StyledLayout>
+      <LayoutHeader />
+      <MyExpenses />
+    </StyledLayout>
   </Provider>;
 };
 
